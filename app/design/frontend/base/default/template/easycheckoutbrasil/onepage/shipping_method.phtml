@@ -1,0 +1,24 @@
+<?php if ( ! $this->getQuote()->isVirtual()): ?>
+
+    <div id="shipping-method" class="easycheckoutbrasil_block">
+
+        <div class="op_block_title"><strong><?php echo $this->__('Shipping Method') ?></strong></div>
+		<div class="form_fields">
+			<div id="checkout-shipping-method-load">
+				<?php echo $this->getChildHtml('available') ?>
+			</div>
+
+			<script type="text/javascript">
+			//<![CDATA[
+				var shippingMethod = new ShippingMethod('shipping-method');
+			//]]>
+			</script>
+
+			<div id="onepage-checkout-shipping-method-additional-load">
+				<?php echo $this->getChildHtml('additional') ?>
+			</div>
+		</div>
+
+    </div>
+
+<?php endif; ?>

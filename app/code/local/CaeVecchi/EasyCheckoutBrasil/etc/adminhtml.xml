@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <easycheckoutbrasil translate="title" module="easycheckoutbrasil">
+                                        <title>Projeto Easy Checkout Brasil</title>
+                                    </easycheckoutbrasil>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

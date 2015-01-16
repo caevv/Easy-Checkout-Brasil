@@ -1,0 +1,134 @@
+<?php 
+
+$logged		= $this->isCustomerLoggedIn();
+$has_addr	= $this->customerHasAddresses();
+
+?>
+
+<?php if (! $this->getQuote()->isVirtual()): ?>
+
+    <ul>
+        <li class="options">
+            <input type="checkbox" class="checkbox" name="shipping[same_as_billing]" id="shipping:same_as_billing" value="1"<?php if($this->getShipAddress()->getSameAsBilling()){echo ' checked="checked" ';} ?> title="<?php echo $this->__('Ship to this address') ?>" onclick="shipping.setSameAsBilling(this.checked)" />
+            <label><?php echo $this->__('Ship to this address') ?></label>
+        </li>
+    </ul>
+
+    <div id="ship_address_block" class="easycheckoutbrasil_block"<?php if($this->getShipAddress()->getSameAsBilling()){echo ' style="display: none;"';}?>>
+
+        <div class="op_block_title"><strong><?php echo $this->__('New Shipping Address') ?></strong></div>
+
+        <div class="form_fields">
+            <?php if ($has_addr): ?>
+                <div class="full">
+                    <div class="data_area"><?php echo $this->getCustomerShipAddr() ?></div>
+                </div>
+            <?php endif; ?>
+
+            <div id="ship_form"<?php if ($has_addr){ echo ' style="display:none;" ';}?>>
+
+                <input type="hidden" name="shipping[address_id]" id="shipping:address_id" value="<?php echo $this->getShipAddress()->getId() ?>" />
+                <div class="two_fields">
+                    <?php echo $this->getLayout()->createBlock('easycheckoutbrasil/widget_name')->setObject($this->getShipAddress())->setFieldIdFormat('shipping:%s')->setFieldNameFormat('shipping[%s]')->setFieldParams('onchange="shipping.setSameAsBilling(false)"')->toHtml() ?>
+                </div>
+
+               <div class='clr'></div>
+
+                <div class="full">
+                    <label for="shipping:telephone">Telefone</label> <sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" name="shipping[telephone]" value="<?php echo $this->htmlEscape($this->getShipAddress()->getTelephone()) ?>" title="Telefone" class="t1" id="shipping:telephone" />
+                    </div>
+                </div>
+
+                <div class='clr'></div>
+
+                <div class="full">
+                    <label for="shipping:postcode" class="required">CEP</label> <sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" title="CEP" name="shipping[postcode]" id="shipping:postcode" value="" class="t1 validate-zip-international required-entry" onchange="shipping.setSameAsBilling(false);" onblur="buscarEndereco('<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, Mage::app()->getStore()->isCurrentlySecure()); ?>', $(this), $('shipping:street1'),$('shipping:street2'),$('shipping:street4'),$('shipping:city'),$('shipping:region_id')); checkout.update({'shipping-method' : 1});" />
+                    </div>
+                </div>
+
+                <div class="clr"></div>
+
+                <div class="full">
+                    <label for="endereco" class="required">Endereço</label> <sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" id="shipping:street1" name="shipping[street][1]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(1)) ?>" title="Endereço" class="input-text t1 required-entry" />
+                    </div>
+                </div>
+
+                <div class="two_fields">
+                    <div class="short">
+                        <label for="shipping:street2" class="required">Número</label> <sup>*</sup>
+                        <div class="data_area">
+                            <input type="text" id="shipping:street2" name="shipping[street][2]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(2)) ?>" title="<?php echo $this->__('N&uacute;mero') ?>" class="input-text t1" />
+                        </div>
+                    </div>
+
+                    <div class="short">
+                        <label for="shipping:street3">Complemento</label>
+                        <div class="data_area">
+                            <input type="text" id="shipping:street3" name="shipping[street][3]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(3)) ?>" title="<?php echo $this->__('Complemento') ?>" class="input-text t1" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class='clr'></div>
+
+                <div class="full">
+                    <label for="bairro" class="required">Bairro</label> <sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" id="shipping:street4" name="shipping[street][4]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(4)) ?>" title="<?php echo $this->__('Bairro') ?>" class="input-text t1 required-entry" />
+                    </div>
+                </div>
+
+                <div class="two_fields">
+                    <div class="short">
+                        <label>Cidade</label> <sup>*</sup>
+                        <div class="data_area">
+                            <input type="text" name="shipping[city]" id="shipping:city" title="<?php echo $this->__('City') ?>" value="<?php echo $this->htmlEscape($this->getBillAddress()->getCity()) ?>" class="t1 required-entry" onchange="shipping.setSameAsBilling(false);" />
+                        </div>
+                    </div>
+
+                    <div class="short">
+                        <label>Estado</label> <sup>*</sup>
+                        <div class="data_area">
+                            <select id="shipping:region_id" name="shipping[region_id]" title="Estado" class="validate-select required-entry" style="display:none;">
+                                <option value="">Selecione</option>
+                            </select>
+
+                            <script type="text/javascript">
+                            //<![CDATA[
+                                $('shipping:region_id').setAttribute('defaultValue',  "<?php echo $this->getBillAddress()->getRegionId() ?>");
+                            //]]>
+                            </script>
+
+                            <input type="text" id="shipping:region" name="shipping[region]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getRegion()) ?>"  title="<?php echo $this->__('State/Province') ?>" class="t1" style="display:none;" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class='clr'></div>
+
+                <div class="full">
+                    <label>País</label> <sup>*</sup>
+                    <div class="data_area"><?php echo $this->getShippingCountriesSelectBox() ?></div>
+                </div>
+
+                <div class="no-display">
+                    <input type="hidden" name="shipping[save_in_address_book]" value="1" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+<?php endif; ?>
+
+<script type="text/javascript">
+//<![CDATA[
+	var shipping = new ShippingAddress('easycheckoutbrasil_orderform');
+	var shippingRegionUpdater = new RegionUpdater('shipping:country_id', 'shipping:region', 'shipping:region_id', countryRegions, undefined, 'shipping:postcode');
+//]]>
+</script>

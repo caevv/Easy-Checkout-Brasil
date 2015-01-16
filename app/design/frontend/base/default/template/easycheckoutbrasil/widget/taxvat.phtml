@@ -1,0 +1,4 @@
+<label for="<?php echo $this->getFieldId('taxvat')?>"<?php if ($this->isRequired()) echo ' class="required"' ?>>CPF</label><sup>*</sup>
+<div class="data_area">
+    <input type="text" id="<?php echo $this->getFieldId('taxvat')?>" name="<?php echo $this->getFieldName('taxvat')?>" value="<?php echo $this->htmlEscape($this->getTaxvat()) ?>" title="CPF" class="cpf t1 required-entry" <?php echo $this->getFieldParams() ?> />
+</div>

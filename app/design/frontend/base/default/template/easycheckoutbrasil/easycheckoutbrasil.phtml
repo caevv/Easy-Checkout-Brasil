@@ -1,0 +1,109 @@
+<div class="page-title">
+    <h1 class='h1_opc'><?php echo Mage::getStoreConfig('easycheckoutbrasil/general/title') ?></h1>
+
+    <?php if (! Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+        <div class="login-reg clearfix">
+            <a href="#" style="text-decoration:none;" id="modal">Já possui cadastro? Clique aqui e poupe tempo!</a>
+        </div>
+        
+        <?php 
+            echo $this->getChildHtml('customer.login');
+            echo $this->getChildHtml('customer.forgot');
+        ?>
+    <?php endif; ?>
+</div>
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<?php
+$seq_http	= (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on');
+  
+?>
+<script type="text/javascript">
+	var http_type	= '<?php if($seq_http){echo 'https';}else{echo 'http';}?>';
+</script>
+
+<script type="text/javascript">countryRegions = <?php echo $this->helper('directory')->getRegionJson() ?></script>
+
+<form action="" id="easycheckoutbrasil_orderform">
+<div class="col3-set easycheckoutbrasil_datafields">
+    <div class="col-1">
+        <?php echo $this->getChildHtml('billing.address') ?>
+        <?php echo $this->getChildHtml('shipping.address') ?>
+    </div>
+
+    <div class="col-2">
+        <?php echo $this->getChildHtml('shipping.method') ?>
+        <?php echo $this->getChildHtml('payment.method') ?>
+         <div id="checkout-coupon-discount-load">
+            <?php echo $this->getChildHtml('coupon') ?>
+        </div>
+
+		<?php if (Mage::helper('easycheckoutbrasil')->isSubscribeNewAllowed()) : ?>
+            <p class="newsletter">
+                <input type="hidden" checked="checked" id="newsletter-signup" name="newsletter" value="1" title="<?php echo Mage::helper('newsletter')->__('Sign up for our newsletter') ?>" class="checkbox" />
+                <label for="newsletter-signup">
+                    <?php echo Mage::helper('newsletter')->__('Sign up for our newsletter') ?>
+                </label>
+            </p>
+        <?php endif; ?>
+
+    </div>
+
+    <div class="col-3">
+        <?php echo $this->getChildHtml('review') ?>
+    </div>
+</div>
+</form>
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/maskedinput.min.js') ?>"></script>
+
+<script type="text/javascript">
+
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function() {
+        $j('input[name*="postcode"]').mask("99999-999");
+        $j('input[name*="telephone"]').mask("(99) 9999999?99");
+        $j('input[name*="celular"]').mask("(99) 9999999?99");
+        $j('input[name*="taxvat"]').mask("999.999.999-99");
+
+        $j('#modal').click(function() {
+            $j('#easycheckoutbrasil_loginbox').fadeIn();
+        });
+
+        $j('#easycheckoutbrasil_loginbox, #easycheckoutbrasil_forgotbox').css({
+            position:'absolute',
+            left: ($j(window).width() - $j('#easycheckoutbrasil_loginbox, #easycheckoutbrasil_forgotbox').outerWidth())/2,
+            top: ($j(window).height() - $j('#easycheckoutbrasil_loginbox, #easycheckoutbrasil_forgotbox').outerHeight())/2
+        });
+    });
+</script>
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/funcoes.js') ?>"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+    var checkout = new OPC('easycheckoutbrasil_orderform', {
+    	save    : '<?php echo $this->getUrl('easycheckoutbrasil/index/saveOrder', array('_secure'=>$seq_http)) ?>',
+    	update  : '<?php echo $this->getUrl('easycheckoutbrasil/index/updateCheckout', array('_secure'=>$seq_http)) ?>',
+        success : '<?php echo $this->getUrl('easycheckoutbrasil/index/success', array('_secure'=>$seq_http)) ?>',
+        failure : '<?php echo $this->getUrl('checkout/cart') ?>'
+    }, "<?php echo $this->__('Please agree to all the terms and conditions.') ?>");
+
+    document.observe("dom:loaded", function() {
+        var win_triggers	= Array();
+   		$$('.checkout-agreements .agree a').each(function(item){
+   			var obj	= {
+   				el: $$('.' + item.className),
+   		   		event: 'click',
+				window: $(item.className + '-window')
+			};
+   			win_triggers.push(obj);
+        });
+		opc_window	= new OPC.Window({triggers: win_triggers});
+    });
+
+//]]>
+</script>

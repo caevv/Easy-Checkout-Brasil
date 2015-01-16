@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <modules>
+        <CaeVecchi_EasyCheckoutBrasil>
+            <version>0.0.6</version>
+        </CaeVecchi_EasyCheckoutBrasil>
+    </modules>
+
+    <admin>
+        <fieldsets>
+            <customer_dataflow>
+                <rg><billing>1</billing><shipping>1</shipping></rg>
+                <celular><billing>1</billing><shipping>1</shipping></celular>
+            </customer_dataflow>
+        </fieldsets>
+    </admin>
+
+    <global>
+
+        <resources>
+            <easycheckoutbrasil_setup>
+                <setup>
+                    <module>CaeVecchi_EasyCheckoutBrasil</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </easycheckoutbrasil_setup>
+            <easycheckoutbrasil_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </easycheckoutbrasil_write>
+            <easycheckoutbrasil_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </easycheckoutbrasil_read>
+        </resources>
+
+        <fieldsets>
+            <sales_copy_order_billing_address>
+                <rg><to_order>*</to_order></rg>
+                <celular><to_order>*</to_order></celular>
+            </sales_copy_order_billing_address>
+
+            <sales_copy_order_shipping_address>
+                <rg><to_order>*</to_order></rg>
+                <celular><to_order>*</to_order></celular>
+            </sales_copy_order_shipping_address>
+
+            <sales_convert_quote_address>
+                <rg><to_order_address>*</to_order_address><to_customer_address>*</to_customer_address></rg>
+                <celular><to_order_address>*</to_order_address><to_customer_address>*</to_customer_address></celular>
+            </sales_convert_quote_address>
+
+            <sales_convert_order_address>
+                <rg><to_quote_address>*</to_quote_address></rg>
+                <celular><to_quote_address>*</to_quote_address></celular>
+            </sales_convert_order_address>
+
+            <customer_address>
+                <rg><to_quote_address>*</to_quote_address></rg>
+                <celular><to_quote_address>*</to_quote_address></celular>
+            </customer_address>
+
+            <checkout_onepage_billing>
+                <rg><to_customer>*</to_customer></rg>
+                <celular><to_customer>*</to_customer></celular>
+            </checkout_onepage_billing>
+        </fieldsets>
+
+        <models>
+            <easycheckoutbrasil>
+                <class>CaeVecchi_EasyCheckoutBrasil_Model</class>
+            </easycheckoutbrasil>
+            <easycheckoutbrasil_adminhtml>
+                <class>CaeVecchi_EasyCheckoutBrasil_Adminhtml_Model</class>
+            </easycheckoutbrasil_adminhtml>
+        </models>
+
+        <blocks>
+            <checkout>
+                <rewrite>
+                    <links>CaeVecchi_EasyCheckoutBrasil_Block_Links</links>
+                </rewrite>
+            </checkout>
+            <easycheckoutbrasil>
+                <class>CaeVecchi_EasyCheckoutBrasil_Block</class>
+            </easycheckoutbrasil>
+        </blocks>
+
+        <helpers>
+            <checkout>
+                <rewrite>
+                    <url>CaeVecchi_EasyCheckoutBrasil_Helper_Url</url>
+                </rewrite>
+            </checkout>
+            <easycheckoutbrasil>
+                <class>CaeVecchi_EasyCheckoutBrasil_Helper</class>
+            </easycheckoutbrasil>
+        </helpers>
+
+    </global>
+
+    <frontend>
+
+        <routers>
+            <easycheckoutbrasil>
+                <use>standard</use>
+                <args>
+                    <module>CaeVecchi_EasyCheckoutBrasil</module>
+                    <frontName>easycheckoutbrasil</frontName>
+                </args>
+            </easycheckoutbrasil>
+        </routers>
+
+        <translate>
+            <modules>
+                <CaeVecchi_EasyCheckoutBrasil>
+                    <files>
+                        <default>CaeVecchi_EasyCheckoutBrasil.csv</default>
+                    </files>
+                </CaeVecchi_EasyCheckoutBrasil>
+            </modules>
+        </translate>
+
+        <layout>
+            <updates>
+                <easycheckoutbrasil>
+                    <file>easycheckoutbrasil.xml</file>
+                </easycheckoutbrasil>
+            </updates>
+        </layout>
+
+        <events>
+
+            <sales_model_service_quote_submit_after>
+                <observers>
+                    <easycheckoutbrasil>
+                        <type>model</type>
+                        <class>easycheckoutbrasil/observer</class>
+                        <method>removeHistoryComment</method>
+                    </easycheckoutbrasil>
+                </observers>
+            </sales_model_service_quote_submit_after>
+
+            <sales_model_service_quote_submit_before>
+                <observers>
+                    <easycheckoutbrasil>
+                        <type>model</type>
+                        <class>easycheckoutbrasil/observer</class>
+                        <method>addHistoryComment</method>
+                    </easycheckoutbrasil>
+                </observers>
+            </sales_model_service_quote_submit_before>
+
+        </events>
+    </frontend>
+
+    <adminhtml>
+
+        <translate>
+            <modules>
+                <IWD_easycheckoutbrasil>
+                    <files>
+                        <default>CaeVecchi_EasyCheckoutBrasil.csv</default>
+                    </files>
+                </IWD_easycheckoutbrasil>
+            </modules>
+        </translate>
+
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <easycheckoutbrasil translate="title" module="easycheckoutbrasil">
+                                            <title>One Page Checkout Section</title>
+                                        </easycheckoutbrasil>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+
+    <default>
+
+        <easycheckoutbrasil>
+            <general>
+                <enabled>1</enabled>
+                <title>Finalize a sua compra</title>
+                <taxvat>1</taxvat>
+                <payment_method>akatus</payment_method>
+                <country>BR</country>
+            </general>
+
+            <agreements>
+                <enabled>0</enabled>
+                <output>minimal</output>
+            </agreements>
+
+            <geo_ip>
+                <country>0</country>
+                <country_file></country_file>
+                <city>0</city>
+                <city_file></city_file>
+            </geo_ip>
+        </easycheckoutbrasil>
+
+    </default>
+
+    <admin>
+        <routers>
+            <easycheckoutbrasil>
+                <use>admin</use>
+                <args>
+                    <module>CaeVecchi_EasyCheckoutBrasil</module>
+                    <frontName>easycheckoutbrasil</frontName>
+                </args>
+            </easycheckoutbrasil>
+        </routers>
+    </admin>
+
+</config>

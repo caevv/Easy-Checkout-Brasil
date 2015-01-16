@@ -1,0 +1,123 @@
+<div class="page-title">
+    <h1>Alterar Informações da Conta</h1>
+</div>
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<form action="<?php echo $this->getUrl('customer/account/editPost') ?>" method="post" id="form-validate">
+
+    <div class="fieldset">
+        <?php echo $this->getBlockHtml('formkey')?>
+        <h2 class="legend">Informações da Conta</h2>
+
+        <ul class="form-list">
+            <li class="fields">
+                <?php echo $this->getLayout()->createBlock('customer/widget_name')->setObject($this->getCustomer())->toHtml() ?>
+            </li>
+            <li>
+                <label for="email" class="required"><em>*</em>E-mail</label>
+                <div class="input-box">
+                    <input type="text" name="email" id="email" value="<?php echo $this->htmlEscape($this->getCustomer()->getEmail()) ?>" title="'E-mail" class="input-text required-entry validate-email" />
+                </div>
+            </li>
+
+            <li class="control">
+                <input type="checkbox" name="change_password" id="change_password" value="1" onclick="setPasswordForm(this.checked)" title="Alterar senha"<?php if($this->getCustomer()->getChangePassword()==1): ?> checked="checked"<?php endif; ?> class="checkbox" /><label for="change_password">Alterar senha</label>
+            </li>
+
+            <br style="clear: both" />
+
+            <li class="fields boxpf">
+                <div class="customer-name">
+                    <div class="field">
+                    <label class="required"><em>*</em>Identidade</label>
+                      <div class="input-box">
+                          <input type="text" name="rg" id="rg"  value="<?php echo $this->htmlEscape($this->getCustomer()->getRg()) ?>" title="Identidade" class="input-text required-entry" />
+                      </div>
+                    </div>
+
+                    <?php $_taxvat = $this->getLayout()->createBlock('customer/widget_taxvat') ?>
+                    <div class="field">
+                        <label for="taxvat" class="required"><em>*</em>CPF</label>
+                        <div class="input-box">
+                            <input type="text" id="taxvat" name="taxvat" value="<?php echo $this->getCustomer()->getTaxvat(); ?>" title="CPF" class="input-text required-entry cpf" />
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+
+    </div>
+
+    <div class="fieldset" style="display:none;">
+        <h2 class="legend">Alterar senha</h2>
+        <ul class="form-list">
+            <li>
+                <label for="current_password" class="required"><em>*</em>Senha atual</label>
+                <div class="input-box">
+                    <input type="password" title="Senha atual" class="input-text" name="current_password" id="current_password" />
+                </div>
+            </li>
+            <li class="fields">
+                <div class="field">
+                    <label for="password" class="required"><em>*</em>Nova senha</label>
+                    <div class="input-box">
+                        <input type="password" title="Nova senha" class="input-text validate-password" name="password" id="password" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="confirmation" class="required"><em>*</em>Confirmar nova senha</label>
+                    <div class="input-box">
+                        <input type="password" title="Confirmar nova senha" class="input-text validate-cpassword" name="confirmation" id="confirmation" />
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="buttons-set">
+        <p class="required">* Campos Obrigatórios</p>
+        <p class="back-link"><a href="<?php echo $this->escapeUrl($this->getBackUrl()) ?>"><small>&laquo; </small>Voltar</a></p>
+        <button type="submit" title="Salvar" class="button"><span><span>Salvar</span></span></button>
+    </div>
+</form>
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/maskedinput.min.js') ?>"></script>
+
+<script type="text/javascript">
+
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function() {
+        $j('input[name*="telephone"]').mask("(99) 9999999?99");
+        $j('input[name*="celular"]').mask("(99) 9999999?99");
+        $j('input[name*="taxvat"]').mask("999.999.999-99");
+    });
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+    var dataForm = new VarienForm('form-validate', true);
+
+    function setPasswordForm(arg){
+        if(arg){
+            $('current_password').up(3).show();
+            $('current_password').addClassName('required-entry');
+            $('password').addClassName('required-entry');
+            $('confirmation').addClassName('required-entry');
+
+        }else{
+            $('current_password').up(3).hide();
+            $('current_password').removeClassName('required-entry');
+            $('password').removeClassName('required-entry');
+            $('confirmation').removeClassName('required-entry');
+        }
+    }
+
+    <?php if($this->getCustomer()->getChangePassword()): ?>
+        setPasswordForm(true);
+    <?php endif; ?>
+//]]>
+</script>

@@ -1,0 +1,211 @@
+<?php 
+
+$this->setShowAddressFields(true);
+
+$logged     = $this->isCustomerLoggedIn();
+$has_addr	= $this->customerHasAddresses();
+
+?>
+
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/easycheckoutbrasil.js') ?>"></script>
+
+<div class="easycheckoutbrasil_block">
+    <div class="op_block_title"><strong>Endereço de Cobrança</strong></div>
+    <div class="form_fields">
+
+        <?php if ($has_addr): ?>
+            <div class="full">
+                <div class="data_area">
+                    <?php echo $this->getCustomerBillAddr() ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
+	    <div id="bill_form"<?php if ($has_addr) {echo ' style="display:none;" ';} ?>>
+			<input type="hidden" name="billing[address_id]" id="billing:address_id" value="<?php echo $this->getBillAddress()->getId() ?>" />
+
+            <?php if ( ! $logged): ?>
+
+                <div class="two_fields">
+                    <?php echo $this->getLayout()->createBlock('easycheckoutbrasil/widget_name')->setObject($this->getCustomer())->setFieldIdFormat('billing:%s')->setFieldNameFormat('billing[%s]')->toHtml() ?>
+                </div>
+
+                <div class='clr'></div>
+
+                <div class="full">
+                    <label for="billing:email" class="required validate-email"><?php echo $this->__('Email Address') ?></label><sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" name="billing[email]" value="<?php echo $this->htmlEscape($this->getCustomer()->getEmail()) ?>" title="<?php echo $this->__('Email Address') ?>" class="t1 validate-email required-entry" />
+                    </div>
+                </div>
+
+                <div class="two_fields boxpf">
+                    <div class="short">
+                        <label class="required">Identidade</label><sup>*</sup>
+                        <div class="data_area">
+                            <input type="text" name="billing[rg]" id="rg"  value="<?php echo $this->htmlEscape($this->getCustomer()->getRg()) ?>" title="Identidade" class="input-text t1 required-entry" />
+                        </div>
+                    </div>
+
+                    <div class="short">
+                        <label class="required">CPF</label><sup>*</sup>
+                        <div class="data_area">
+                            <input type="text" name="billing[taxvat]" id="taxvat"  value="<?php echo $this->htmlEscape($this->getCustomer()->getTaxvat()) ?>" title="CPF" class="input-text t1 required-entry cpf" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clr"></div>
+
+            <?php else: ?>
+
+                <input type="hidden" name="billing[address_id]" value="<?php echo $this->getBillAddress()->getId() ?>" />
+                <input type="hidden" name="billing[firstname]" value="<?php echo $this->htmlEscape($this->getCustomer()->getFirstname()) ?>"/>
+                <input type="hidden" name="billing[lastname]" value="<?php echo $this->htmlEscape($this->getCustomer()->getLastname()) ?>"/>
+                <input type="hidden" name="billing[rg]" value="<?php echo $this->htmlEscape($this->getCustomer()->getRg()) ?>"/>
+                <input type="hidden" name="billing[taxvat]" value="<?php echo $this->htmlEscape($this->getCustomer()->getTaxvat()) ?>"/>
+
+            <?php endif; ?>
+
+            <div class="two_fields">
+                <div class="short">
+                    <label for="billing:telephone" class="required">Telefone</label><sup>*</sup>
+                    <div class="data_area">
+                        <input type="text" name="billing[telephone]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getTelephone()) ?>" title="Telefone" class="t1 required-entry" id="billing:telephone" />
+                    </div>
+                </div>
+
+                <div class="short">
+                    <label for="billing:fax">Celular</label>
+                    <div class="data_area">
+                        <input type="text" name="billing[celular]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getCelular()) ?>" title="Celular" class="t1" id="billing:celular" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="clr"></div>
+
+            <div class="full">
+                <label for="billing:postcode" class="required">CEP</label><sup>*</sup>
+                <div class="data_area">
+                <input type="text" title="CEP" name="billing[postcode]" id="billing:postcode" value="" class="t1 validate-zip-international required-entry" onblur="buscarEndereco('<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, Mage::app()->getStore()->isCurrentlySecure()); ?>', $(this),$('billing:street1'),$('billing:street2'),$('billing:street4'),$('billing:city'),$('billing:region_id')); checkout.update({'shipping-method' : 1});"/>
+                </div>
+            </div>
+
+            <div class="clr"></div>
+
+            <div class="full">
+                <label for="endereco" class="required">Endereço</label><sup>*</sup>
+                <div class="data_area">
+                    <input type="text" id="billing:street1" name="billing[street][1]" value="" title="Endereço" class="input-text t1 required-entry" />
+                </div>
+            </div>
+
+            <div class="two_fields">
+                <div class="short">
+                    <label for="billing:street2" class="required">Número<sup>*</sup></label>
+                    <div class="data_area">
+                        <input type="text" id="billing:street2" name="billing[street][2]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(2)) ?>" title="Número" class="input-text t1 required-entry" />
+                    </div>
+                </div>
+
+                <div class="short comp">
+                    <label for="billing:street3">Complemento</label>
+                    <div class="data_area">
+                        <input type="text" id="billing:street3" name="billing[street][3]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(3)) ?>" title="Complemento" class="input-text t1" />
+                    </div>
+                </div>
+            </div>
+
+            <div class='clr'></div>
+
+            <div class="full">
+                <label for="bairro" class="required">Bairro</label><sup>*</sup>
+                <div class="data_area">
+                    <input type="text" id="billing:street4" name="billing[street][4]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getStreet(4)) ?>" title="Bairro" class="input-text t1 required-entry" />
+                </div>
+            </div>
+
+			<div class="two_fields">
+				<div class="short">
+					<label for="billing:city" class="required">Cidade</label><sup>*</sup>
+					<div class="data_area">
+						<input type="text" title="Cidade" name="billing[city]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getCity()) ?>" class="t1 required-entry" id="billing:city" />
+					</div>
+				</div>
+
+				<div class="short">
+					<label for="billing:region_id" class="required">Estado</label><sup>*</sup>
+					<div class="data_area">
+						<select id="billing:region_id" name="billing[region_id]" title="Estado" class="validate-select required-entry">
+							<option value="">Selecione</option>
+						</select>
+
+						<script type="text/javascript">
+						//<![CDATA[
+							$('billing:region_id').setAttribute('defaultValue',  "<?php echo $this->getBillAddress()->getRegionId() ?>");
+						//]]>
+						</script>
+
+						<input type="text" id="billing:region" name="billing[region]" value="<?php echo $this->htmlEscape($this->getBillAddress()->getRegion()) ?>" title="Estado" class="t1 required-entry" />
+					</div>
+				</div>
+			</div>
+
+			<div class='clr'></div>
+
+			<div class="full">
+				<label for="billing:country_id" class="required">País</label><sup>*</sup>
+				<div class="data_area">
+					<?php echo $this->getBillingCountriesSelectBox() ?>
+				</div>
+			</div>
+
+            <input type="hidden" name="billing[register_account]" value="1" />
+
+            <?php if( ! $logged): ?>
+
+				<div class="two_fields" id="register-customer-password">
+					<div class="short">
+						<label for="billing:customer_password" class="required">Senha</label><sup>*</sup>
+						<div class="data_area">
+							<input type="password" name="billing[customer_password]" id="billing:customer_password" title="<?php echo $this->__('Password') ?>" class="t1 required-entry validate-password" />
+						</div>
+					</div>
+					<div class="short">
+						<label for="billing:confirm_password" class="required">Confirme a senha</label><sup>*</sup>
+						<div class="data_area">
+							<input type="password" name="billing[confirm_password]" title="Confirme a senha" id="billing:confirm_password" class="t1 required-entry validate-cpassword" />
+						</div>
+					</div>
+
+					<div class='clr'></div>
+
+				</div>
+
+            <?php endif; ?>
+
+            <div class='clr'></div>
+
+            <div class="no-display">
+                <input type="hidden" value="1" name="billing[save_in_address_book]" />
+            </div>
+	    </div>
+
+        <?php if ($this->canShip()): ?>
+            <input type="hidden" name="billing[use_for_shipping]" id="billing:use_for_shipping" value="<?php echo ($this->isUseBillingAddressForShipping())?'1':'0'; ?>" />
+        <?php else: ?>
+            <input type="hidden" name="billing[use_for_shipping]" value="1" />
+        <?php endif; ?>
+
+	</div>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+	var billing = new BillingAddress();
+	RegionUpdater.prototype.setMarkDisplay = function(){};
+	ZipUpdater.prototype._setPostcodeOptional = function(){};
+	var billingRegionUpdater = new RegionUpdater('billing:country_id', 'billing:region', 'billing:region_id', countryRegions, undefined, 'billing:postcode');
+//]]>
+</script>
